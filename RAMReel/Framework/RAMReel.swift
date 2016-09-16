@@ -400,7 +400,7 @@ final class GestureTarget: NSObject, UIGestureRecognizerDelegate {
         super.init()
     }
     
-    init(type: GestureType, view: UIView, hook: HookType) {
+    init(type: GestureType, view: UIView, hook: @escaping HookType) {
         super.init()
         
         recognizeFor(view, type: type, hook: hook)
@@ -415,7 +415,7 @@ final class GestureTarget: NSObject, UIGestureRecognizerDelegate {
     }
     
     var hooks: [UIGestureRecognizer: (UIView, HookType)] = [:]
-    func recognizeFor(_ view: UIView, type: GestureType, hook: HookType) {
+    func recognizeFor(_ view: UIView, type: GestureType, hook: @escaping HookType) {
         let gestureRecognizer: UIGestureRecognizer
         switch type {
         case .tap:
