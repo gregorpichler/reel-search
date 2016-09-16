@@ -53,9 +53,9 @@ public struct RAMTheme: Theme {
     /// Theme background color.
     public let listBackgroundColor: UIColor
     
-    private init(
-        textColor: UIColor = UIColor.blackColor(),
-        listBackgroundColor: UIColor = UIColor.clearColor(),
+    fileprivate init(
+        textColor: UIColor = UIColor.black,
+        listBackgroundColor: UIColor = UIColor.clear,
         font: UIFont = RAMTheme.defaultFont
         )
     {
@@ -64,27 +64,10 @@ public struct RAMTheme: Theme {
         self.font = font
     }
     
-    private static var defaultFont: UIFont = RAMTheme.initDefaultFont()
+    fileprivate static var defaultFont: UIFont = RAMTheme.initDefaultFont()
     
-    private static func initDefaultFont() -> UIFont {
-        do {
-            try FontLoader.loadRobotoLight()
-        } catch (let error) {
-            print(error)
-        }
-            
-        let font: UIFont
-        if
-            let robotoLoaded = FontLoader.robotoLight,
-            let roboto = UIFont(name: robotoLoaded.name, size: 36)
-        {
-            font = roboto
-        } else if #available(iOS 8.2, *) {
-            font = UIFont.systemFontOfSize(36, weight: UIFontWeightThin)
-        } else {
-            font = UIFont.systemFontOfSize(36)
-        }
-        return font
+    fileprivate static func initDefaultFont() -> UIFont {
+        return UIFont.systemFont(ofSize: 36, weight: UIFontWeightThin)
     }
     
     /** 
@@ -93,7 +76,7 @@ public struct RAMTheme: Theme {
     - parameter textColor: New text color.
     - returns: New `RAMTheme` instance.
      */
-    public func textColor(textColor: UIColor) -> RAMTheme {
+    public func textColor(_ textColor: UIColor) -> RAMTheme {
         return RAMTheme(textColor: textColor, listBackgroundColor: self.listBackgroundColor, font: self.font)
     }
     
@@ -103,7 +86,7 @@ public struct RAMTheme: Theme {
      - parameter listBackgroundColor: New background color.
      - returns: New `RAMTheme` instance.
      */
-    public func listBackgroundColor(listBackgroundColor: UIColor) -> RAMTheme {
+    public func listBackgroundColor(_ listBackgroundColor: UIColor) -> RAMTheme {
         return RAMTheme(textColor: self.textColor, listBackgroundColor: listBackgroundColor, font: self.font)
     }
     
@@ -113,57 +96,9 @@ public struct RAMTheme: Theme {
      - parameter font: New font.
      - returns: New `RAMTheme` instance.
      */
-    public func font(font: UIFont) -> RAMTheme {
+    public func font(_ font: UIFont) -> RAMTheme {
         return RAMTheme(textColor: self.textColor, listBackgroundColor: self.listBackgroundColor, font: font)
     }
     
 }
 
-// MARK: - Font loader
-
-/**
-FontLoader
---
-*/
-final class FontLoader {
-    
-    enum Error: ErrorType {
-        case FailedToLoadFont(String)
-    }
-    
-    static let robotoLight: FontLoader? = try? FontLoader.loadRobotoLight()
-    
-    static func loadRobotoLight() throws -> FontLoader {
-        return try FontLoader(name: "Roboto-Light", type: "ttf")
-    }
-    
-    let name: String
-    let type: String
-    
-    private init(name: String, type: String) throws {
-        self.name = name
-        self.type = type
-        
-        guard FontLoader.loadedFonts[name] == nil else {
-            return
-        }
-        
-        let bundle = NSBundle(forClass: self.dynamicType as AnyClass)
-
-        if
-            let fontPath = bundle.pathForResource(name, ofType: type),
-            let inData = NSData(contentsOfFile: fontPath),
-            let provider = CGDataProviderCreateWithCFData(inData),
-            let font = CGFontCreateWithDataProvider(provider)
-            where CTFontManagerRegisterGraphicsFont(font, nil)
-        {
-            FontLoader.loadedFonts[self.name] = self
-            return
-        } else {
-            throw Error.FailedToLoadFont(name)
-        }
-    }
-    
-    private static var loadedFonts: [String: FontLoader] = [:]
-    
-}
