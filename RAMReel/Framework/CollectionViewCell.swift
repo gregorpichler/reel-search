@@ -83,7 +83,7 @@ open class RAMCell: UICollectionViewCell, ConfigurableCell {
         
         self.contentView.addSubview(textLabel)
         
-        let views = ["textLabel": textLabel]
+        let views: [String : UIView] = ["textLabel": textLabel]
         
         let textLabelHConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(20)-[textLabel]-(20)-|", options: NSLayoutFormatOptions.alignAllCenterX, metrics: nil, views: views) 
         self.addConstraints(textLabelHConstraints)
